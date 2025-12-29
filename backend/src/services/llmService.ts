@@ -243,7 +243,7 @@ export class LLMService {
 
     if (!process.env.OPENAI_API_KEY) {
       throw new Error(
-        'OPENAI_API_KEY is not configured. Please set it in your .env file or use LLM_PROVIDER=mock for testing.'
+        'OPENAI_API_KEY is not configured. Please set it as an environment variable or use LLM_PROVIDER=mock for testing.'
       );
     }
 

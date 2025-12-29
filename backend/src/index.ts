@@ -15,7 +15,7 @@ try {
 } catch (error: any) {
   console.error('Configuration Error:', error.message);
   console.error(
-    'Please create a .env file based on .env.example and set OPENAI_API_KEY'
+    'Please set environment variables: LLM_PROVIDER and OPENAI_API_KEY (or use LLM_PROVIDER=mock)'
   );
   process.exit(1);
 }
