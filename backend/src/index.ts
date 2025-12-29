@@ -46,6 +46,20 @@ app.use((req, res, next) => {
 // Routes
 app.use('/api/chat', chatRoutes);
 
+// Root route
+app.get('/', (req, res) => {
+  res.json({
+    name: 'Spur AI Live Chat Agent API',
+    version: '1.0.0',
+    status: 'running',
+    endpoints: {
+      health: '/api/health',
+      chat: '/api/chat/message',
+      history: '/api/chat/history/:sessionId',
+    },
+  });
+});
+
 // Health check route
 app.get('/api/health', (req, res) => {
   res.json({
