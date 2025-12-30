@@ -10,6 +10,7 @@ export function Message({ message }: MessageProps) {
 
   // Format time to show current local time properly
   const formatTime = (timestamp: string) => {
+    // Parse the UTC timestamp
     const date = new Date(timestamp);
     const now = new Date();
 
@@ -17,9 +18,11 @@ export function Message({ message }: MessageProps) {
     const isToday = date.toDateString() === now.toDateString();
 
     if (isToday) {
+      // Return time in local timezone
       return date.toLocaleTimeString([], {
         hour: '2-digit',
         minute: '2-digit',
+        hour12: true,
       });
     } else {
       return date.toLocaleString([], {
@@ -27,6 +30,7 @@ export function Message({ message }: MessageProps) {
         day: 'numeric',
         hour: '2-digit',
         minute: '2-digit',
+        hour12: true,
       });
     }
   };

@@ -1,6 +1,16 @@
 import db from './connection';
 import { v4 as uuidv4 } from 'uuid';
 
+// Helper to convert SQLite timestamp to ISO string with UTC marker
+function toISOString(sqliteTimestamp: string): string {
+  // SQLite CURRENT_TIMESTAMP format: 'YYYY-MM-DD HH:MM:SS'
+  // Add 'Z' to indicate UTC if not present
+  if (sqliteTimestamp && !sqliteTimestamp.endsWith('Z')) {
+    return sqliteTimestamp.replace(' ', 'T') + 'Z';
+  }
+  return sqliteTimestamp;
+}
+
 export interface Conversation {
   id: string;
   created_at: string;
@@ -56,6 +66,8 @@ export const messageModel = {
     conversationModel.updateTimestamp(conversationId);
 
     const message = db.prepare('SELECT * FROM messages WHERE id = ?').get(id) as Message;
+    // Convert SQLite timestamp to proper ISO format
+    message.timestamp = toISOString(message.timestamp);
     return message;
   },
 
@@ -65,7 +77,12 @@ export const messageModel = {
       WHERE conversation_id = ? 
       ORDER BY timestamp ASC
     `);
-    return stmt.all(conversationId) as Message[];
+    const messages = stmt.all(conversationId) as Message[];
+    // Convert timestamps to ISO format
+    return messages.map(msg => ({
+      ...msg,
+      timestamp: toISOString(msg.timestamp)
+    }));
   },
 
   getRecentMessages(conversationId: string, limit: number = 10): Message[] {
@@ -76,6 +93,10 @@ export const messageModel = {
       LIMIT ?
     `);
     const messages = stmt.all(conversationId, limit) as Message[];
-    return messages.reverse(); // Return in chronological order
+    // Convert timestamps and return in chronological order
+    return messages.map(msg => ({
+      ...msg,
+      timestamp: toISOString(msg.timestamp)
+    })).reverse();
   }
 };
