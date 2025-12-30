@@ -34,7 +34,9 @@ export const conversationModel = {
     `);
     stmt.run(id);
 
-    const conversation = db.prepare('SELECT * FROM conversations WHERE id = ?').get(id) as Conversation;
+    const conversation = db
+      .prepare('SELECT * FROM conversations WHERE id = ?')
+      .get(id) as Conversation;
     return conversation;
   },
 
@@ -50,7 +52,7 @@ export const conversationModel = {
       WHERE id = ?
     `);
     stmt.run(id);
-  }
+  },
 };
 
 export const messageModel = {
@@ -65,7 +67,9 @@ export const messageModel = {
     // Update conversation timestamp
     conversationModel.updateTimestamp(conversationId);
 
-    const message = db.prepare('SELECT * FROM messages WHERE id = ?').get(id) as Message;
+    const message = db
+      .prepare('SELECT * FROM messages WHERE id = ?')
+      .get(id) as Message;
     // Convert SQLite timestamp to proper ISO format
     message.timestamp = toISOString(message.timestamp);
     return message;
@@ -79,9 +83,9 @@ export const messageModel = {
     `);
     const messages = stmt.all(conversationId) as Message[];
     // Convert timestamps to ISO format
-    return messages.map(msg => ({
+    return messages.map((msg) => ({
       ...msg,
-      timestamp: toISOString(msg.timestamp)
+      timestamp: toISOString(msg.timestamp),
     }));
   },
 
@@ -94,9 +98,11 @@ export const messageModel = {
     `);
     const messages = stmt.all(conversationId, limit) as Message[];
     // Convert timestamps and return in chronological order
-    return messages.map(msg => ({
-      ...msg,
-      timestamp: toISOString(msg.timestamp)
-    })).reverse();
-  }
+    return messages
+      .map((msg) => ({
+        ...msg,
+        timestamp: toISOString(msg.timestamp),
+      }))
+      .reverse();
+  },
 };
